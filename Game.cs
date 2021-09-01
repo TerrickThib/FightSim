@@ -15,48 +15,8 @@ namespace FightSim
 
     class Game
     {
-        public void Run()
-        {
-            //Monster 1 Stats
-            Monster monster1;
-            monster1.name = "Wompus";
-            monster1.attack = 10.0f;
-            monster1.defense = 5.0f;
-            monster1.health = 20.0f;
-
-
-            //Monster 2
-            Monster monster2;
-            monster2.name = "Thompus";
-            monster2.attack = 15.0f;
-            monster2.defense = 10.0f;
-            monster2.health = 15.0f;
-
-            //Print Monster1 stats
-            PrintStats(monster1);
-            //Print Monster2 stats
-            PrintStats(monster2);
-
-            //Monster 1 attacks Monster 2
-            float damageTaken = Fight(monster1, monster2);
-            Console.WriteLine(monster2.name + " has taken " + damageTaken);
-
-            //Monster 2 attacks Monster 1
-            damageTaken = Fight(monster2, monster1);
-            Console.WriteLine(monster1.name + " has taken " + damageTaken);
-
-            Console.ReadKey();
-            Console.Clear();
-
-            //Print Monster1 stats
-            PrintStats(monster1);
-            //Print Monster2 stats
-            PrintStats(monster2);
-            Console.ReadKey();
-        }
-
         //Function for monster attack
-        float Fight(Monster attacker, Monster defender)
+        float Fight(Monster attacker, ref Monster defender)
         {
             float damageTaken = CalculateDamage(attacker, defender);
             defender.health -= damageTaken;
@@ -84,11 +44,103 @@ namespace FightSim
 
             return damage;
         }
-
         float CalculateDamage(Monster attacker, Monster defender)
         {
             return attacker.attack - defender.defense;
         }
+
+        //Function For Fight 
+        string StartBattle(ref Monster wompus, ref Monster thompus)
+        {
+            string matchResult = "No Contest";
+
+            while (wompus.health > 0 && thompus.health > 0)
+            {
+                //Print Monster1 stats
+                PrintStats(wompus);
+                //Print Monster2 stats
+                PrintStats(thompus);
+
+                //Monster 1 attacks Monster 2
+                float damageTaken = Fight(wompus, ref thompus);
+                Console.WriteLine(thompus.name + " has taken " + damageTaken);
+
+                //Monster 2 attacks Monster 1
+                damageTaken = Fight(thompus, ref wompus);
+                Console.WriteLine(wompus.name + " has taken " + damageTaken);
+
+                Console.ReadKey(true);
+                Console.Clear();
+            }
+
+            if (wompus.health < 0 && thompus.health <= 0)
+            {
+                matchResult = "Draw";
+            }
+
+            else if (wompus.health > 0)
+            {
+                matchResult = wompus.name;
+            }
+            else if (thompus.health > 0)
+            {
+                matchResult = thompus.name;
+            }
+
+
+            return matchResult;
+        }
+                                
+        public void Run()
+        {
+            //Monster 1 Stats
+            Monster wompus;
+            wompus.name = "Wompus";
+            wompus.attack = 15.0f;
+            wompus.defense = 5.0f;
+            wompus.health = 20.0f;
+
+
+            //Monster 2
+            Monster thompus;
+            thompus.name = "Thompus";
+            thompus.attack = 15.0f;
+            thompus.defense = 10.0f;
+            thompus.health = 15.0f;
+
+            //Monster3
+            Monster Backupwompus;
+            Backupwompus.name = "Backup Wompus";
+            Backupwompus.attack = 25.6f;
+            Backupwompus.defense = 5.0f;
+            Backupwompus.health = 3.0f;
+
+            //Monster4
+            Monster UnclePhil;
+            UnclePhil.name = "Uncle Phil";
+            UnclePhil.attack = 1000000f;
+            UnclePhil.defense = 0f;
+            UnclePhil.health = 1.0f;
+            
+            //Game Fight Starts
+            string result = StartBattle(ref wompus, ref thompus);
+
+            if (result == "Draw")
+            {
+                Console.WriteLine("Match was a draw. ");
+            }
+            else
+            {
+                Console.WriteLine(result + " wins!!");
+            }
+
+            result = StartBattle(ref Backupwompus, ref UnclePhil);
+
+                                 
+        }
+
+        
+                                       
     }
 
 }
