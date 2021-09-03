@@ -105,6 +105,17 @@ namespace FightSim
         
         public void Run()
         {
+            Start();
+            
+            while (!gameOver)
+            {
+                Update();
+            }
+                                    
+        }
+
+        void Start()
+        {
             //Monster 1
             wompus.name = "Wompus";
             wompus.attack = 15.0f;
@@ -126,15 +137,23 @@ namespace FightSim
 
             //Monster4
             UnclePhil.name = "Uncle Phil";
-            UnclePhil.attack = 1000000f;
+            UnclePhil.attack = 100000000000f;
             UnclePhil.defense = 0f;
             UnclePhil.health = 1.0f;
-                                    
+
+            //Set starting fighters
+            currentMonster1 = GetMonster(currentMonsterIndex);
+            currentMonsterIndex++;
+            currentMonster2 = GetMonster(currentMonsterIndex);
+
         }
 
         void Update()
         {
             Battle();
+            UpdateCurrentMonsters();
+            Console.ReadKey(true);
+            Console.Clear();
         }
 
         Monster GetMonster(int monsterIndex)
@@ -164,7 +183,10 @@ namespace FightSim
 
             return monster;
         }
-        //Battle Function 
+
+        /// <summary>
+        /// Simulates one turn in the current monster fight
+        /// </summary>
         void Battle()
         {
             //Print Monster1 stats
@@ -181,10 +203,33 @@ namespace FightSim
             Console.WriteLine(currentMonster1.name + " has taken " + damageTaken);            
         }
 
-        //Update Current Monsters
+        /// <summary>
+        /// Changes one of the current fighters to be the next in the list 
+        /// if it has died. Ends the game if all fighters in the list have bben used.
+        /// </summary>
         void UpdateCurrentMonsters()
         {
-            if()
+            //If monster 1 has died
+            if(currentMonster1.health <= 0)
+            {
+                //...increment the current monster index and swap out the monster
+                currentMonsterIndex++;
+                currentMonster1 = GetMonster(currentMonsterIndex);
+            }
+            //If monster 2 has died
+            if(currentMonster2.health <= 0)
+            {
+                //...increment the current monster index and swap out the monster
+                currentMonsterIndex++;
+                currentMonster2 = GetMonster(currentMonsterIndex);
+            }
+            //If either monster is set to "None" andthe last monster has been set...
+            if (currentMonster2.name == "None" || currentMonster1.name == "None" && currentMonsterIndex >= 4)
+            {
+                //...end the game
+                Console.WriteLine("Simulation Over");
+                gameOver = true;
+            }
         }
                                        
     }
