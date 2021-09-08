@@ -19,7 +19,9 @@ namespace FightSim
         bool gameOver = false;
         Monster currentMonster1;
         Monster currentMonster2;
-        int currentMonsterIndex = 1;
+        int currentMonsterIndex = 0;
+        int currentScene = 0;
+
         //Monsters
         Monster wompus;
         Monster thompus;
@@ -141,18 +143,144 @@ namespace FightSim
             UnclePhil.defense = 0f;
             UnclePhil.health = 1.0f;
 
+            ResetCurrentMonsters();
+        }
+
+        void ResetCurrentMonsters()
+        {
+            currentMonsterIndex = 0;
             //Set starting fighters
             currentMonster1 = GetMonster(currentMonsterIndex);
             currentMonsterIndex++;
             currentMonster2 = GetMonster(currentMonsterIndex);
-
         }
 
+        void UpdateCurrentScene()
+        {
+            switch (currentScene)
+            {
+                case 0:
+                    DisplayStartMenu();
+                    break;
+
+                case 1:
+                    Battle();
+                    UpdateCurrentMonsters();
+                    Console.ReadKey();
+                    break;
+
+                case 2:
+                    DisplayRestartMenu();
+                    break;
+
+                default:
+                    Console.WriteLine("Invalid scene index");
+                    break;
+            }
+           
+        }
+        /// <summary>
+        /// Gets an input from the player based on some decision
+        /// </summary>
+        /// <param name="description">The context for the decision</param>
+        /// <param name="option1">The first choice the player has</param>
+        /// <param name="option2">The second choice the player has</param>
+        /// <param name="pauseInvalid">If true, the player must press a key to continue after inputting
+        /// an incorrect value</param>
+        /// <returns>A number representing which of the two options was choosen. Returns 0 if an
+        /// invalid input was recieved</returns>
+        int GetInput(string description, string option1, string option2, bool pauseInvalid = false)
+        {
+            //Print the context and options
+            Console.WriteLine(description);
+            Console.WriteLine("1. " + option1);
+            Console.WriteLine("2. " + option2);
+
+            //Get player input
+            string input = Console.ReadLine();
+            int choice = 0;
+
+            //If the player typed 1...
+            if (input == "1")
+            {
+                //...Set the return variable to be 1
+                choice = 1;
+            }
+            //If the player typed 2...
+            else if (input =="2")
+            {
+                //...Set the return variable to be 2
+                choice = 2;
+            }
+            //If the player did not type a 1 or a 2
+            else
+            {
+                //...Let them know the input was invalid
+                Console.WriteLine("Invalid Input");
+
+                //If we want to pause when an invalid input is recieved..
+                if(pauseInvalid)
+                {
+
+                    Console.ReadKey(true);
+                }
+            }
+
+            return choice;
+        }
+        /// <summary>
+        /// Displays the starting menu. Gives the player the option to start 
+        /// oe exit the simulation
+        /// </summary>
+
+        void DisplayStartMenu()
+        {
+            //Gets players choice
+            int choice = GetInput("Welcome to Monster Fight Simulator and Uncle Phil", "Start Simulation", "Quit Appliocation");
+
+            //If they chose to start the simulation...
+            if (choice ==1)
+            {
+                //..start the battle scene
+                currentScene = 1;
+            }
+            //Otherwise if they chose to exit...
+            else if (choice ==2)
+            {
+                //...end the game
+                gameOver = true;
+            }
+        }
+
+        /// <summary>
+        /// Displays the restart menu. Gives the player the option to restart or exit the program
+        /// </summary>
+        void DisplayRestartMenu()
+        {
+            //Gets the players choice
+            int choice = GetInput("Simulation over. Would you like to play again?", "Yes", "No");
+
+            //If the player chose to restart...
+            if (choice == 1)
+            {
+                //...Set the current scene to be the start menu
+                ResetCurrentMonsters();
+                currentScene = 0;
+            }
+            //If player choose to end game
+            else if (choice == 2)
+            {
+                //Ends the Simulation
+                gameOver = true;
+            }
+        }
+
+        /// <summary>
+        /// Gets called every game loop
+        /// </summary>
         void Update()
         {
-            Battle();
-            UpdateCurrentMonsters();
-            Console.ReadKey(true);
+            UpdateCurrentScene();
             Console.Clear();
         }
 
@@ -164,19 +292,19 @@ namespace FightSim
             monster.defense = 1;
             monster.health = 1;
 
-            if (monsterIndex == 1)
+            if (monsterIndex == 0)
             {
                 monster = UnclePhil;
             }
-            else if (monsterIndex == 2)
+            else if (monsterIndex == 1)
             {
                 monster = Backupwompus;
             }
-            else if (monsterIndex == 3)
+            else if (monsterIndex == 2)
             {
                 monster = wompus;
             }
-            else if (monsterIndex == 4)
+            else if (monsterIndex == 3)
             {
                 monster = thompus;
             }
@@ -226,9 +354,8 @@ namespace FightSim
             //If either monster is set to "None" andthe last monster has been set...
             if (currentMonster2.name == "None" || currentMonster1.name == "None" && currentMonsterIndex >= 4)
             {
-                //...end the game
-                Console.WriteLine("Simulation Over");
-                gameOver = true;
+                //...go to the restart menu
+                currentScene = 2;
             }
         }
                                        
