@@ -21,13 +21,13 @@ namespace FightSim
         Monster currentMonster2;
         int currentMonsterIndex = 0;
         int currentScene = 0;
-
+        
         //Monsters
         Monster wompus;
         Monster thompus;
         Monster Backupwompus;
         Monster UnclePhil;
-
+                
         //Function for monster attack
         float Fight(Monster attacker, ref Monster defender)
         {
@@ -108,12 +108,15 @@ namespace FightSim
         public void Run()
         {
             Start();
-            
+            //Arrary assignment
+            int[] numbers = new int[4] { 1, 2, 3, 4};
+            ArrayRepeat(numbers);
             while (!gameOver)
             {
                 Update();
             }
-                                    
+
+            End();
         }
 
         void Start()
@@ -177,7 +180,7 @@ namespace FightSim
                     Console.WriteLine("Invalid scene index");
                     break;
             }
-           
+             
         }
         /// <summary>
         /// Gets an input from the player based on some decision
@@ -237,7 +240,6 @@ namespace FightSim
         {
             //Gets players choice
             int choice = GetInput("Welcome to Monster Fight Simulator and Uncle Phil", "Start Simulation", "Quit Appliocation");
-
             //If they chose to start the simulation...
             if (choice ==1)
             {
@@ -282,6 +284,11 @@ namespace FightSim
         {
             UpdateCurrentScene();
             Console.Clear();
+        }
+
+        void End()
+        {
+            Console.WriteLine("Guhbah fren");
         }
 
         Monster GetMonster(int monsterIndex)
@@ -330,6 +337,19 @@ namespace FightSim
             damageTaken = Fight(currentMonster2, ref currentMonster1);
             Console.WriteLine(currentMonster1.name + " has taken " + damageTaken);            
         }
+        //Array assignment       
+        void ArrayRepeat(int[] numbers)
+        {
+            //int[] numbers = new int[5] { 1, 2, 3, 4, 5 };
+            for (int i = 0; i < numbers.Length; i++)
+            {
+                Console.WriteLine(numbers[i]);
+            }
+        }
+        
+
+        
+
 
         /// <summary>
         /// Changes one of the current fighters to be the next in the list 
