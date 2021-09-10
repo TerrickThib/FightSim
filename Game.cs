@@ -27,6 +27,9 @@ namespace FightSim
         Monster thompus;
         Monster Backupwompus;
         Monster UnclePhil;
+
+        //Array of Monsters
+        Monster[] monsters;
                 
         //Function for monster attack
         float Fight(Monster attacker, ref Monster defender)
@@ -108,9 +111,6 @@ namespace FightSim
         public void Run()
         {
             Start();
-            //Arrary assignment
-            int[] numbers = new int[4] { 1, 2, 3, 4};
-            ArrayRepeat(numbers);
             while (!gameOver)
             {
                 Update();
@@ -146,16 +146,20 @@ namespace FightSim
             UnclePhil.defense = 0f;
             UnclePhil.health = 1.0f;
 
+            monsters = new Monster[] { wompus, thompus, Backupwompus, UnclePhil };
+
             ResetCurrentMonsters();
         }
-
+        /// <summary>
+        /// Restets the current Monsters Fighting
+        /// </summary>
         void ResetCurrentMonsters()
         {
             currentMonsterIndex = 0;
             //Set starting fighters
-            currentMonster1 = GetMonster(currentMonsterIndex);
+            currentMonster1 = monsters[currentMonsterIndex];
             currentMonsterIndex++;
-            currentMonster2 = GetMonster(currentMonsterIndex);
+            currentMonster2 = monsters[currentMonsterIndex];
         }
 
         void UpdateCurrentScene()
@@ -337,20 +341,19 @@ namespace FightSim
             damageTaken = Fight(currentMonster2, ref currentMonster1);
             Console.WriteLine(currentMonster1.name + " has taken " + damageTaken);            
         }
-        //Array assignment       
-        void ArrayRepeat(int[] numbers)
+        //Function To try to end Simulation
+        bool TrysEndSimulation()
         {
-            //int[] numbers = new int[5] { 1, 2, 3, 4, 5 };
-            for (int i = 0; i < numbers.Length; i++)
+            bool simulationOver = currentMonsterIndex >= monsters.Length;
+
+            if(simulationOver)
             {
-                Console.WriteLine(numbers[i]);
+                currentScene = 2;
             }
+
+            return simulationOver;
         }
-        
-
-        
-
-
+                                      
         /// <summary>
         /// Changes one of the current fighters to be the next in the list 
         /// if it has died. Ends the game if all fighters in the list have bben used.
@@ -360,19 +363,31 @@ namespace FightSim
             //If monster 1 has died
             if(currentMonster1.health <= 0)
             {
-                //...increment the current monster index and swap out the monster
+              //...increment the current monster index and swap out the monster
                 currentMonsterIndex++;
-                currentMonster1 = GetMonster(currentMonsterIndex);
+
+                if(TrysEndSimulation())
+                {
+                    return;
+                }
+
+                currentMonster1 = monsters[currentMonsterIndex];                                             
             }
             //If monster 2 has died
             if(currentMonster2.health <= 0)
             {
-                //...increment the current monster index and swap out the monster
+                //Increments current monster index
                 currentMonsterIndex++;
-                currentMonster2 = GetMonster(currentMonsterIndex);
+                
+                if(TrysEndSimulation())
+                {
+                    return;
+                }
+
+                currentMonster1 = monsters[currentMonsterIndex];                
             }
             //If either monster is set to "None" andthe last monster has been set...
-            if (currentMonster2.name == "None" || currentMonster1.name == "None" && currentMonsterIndex >= 4)
+            if (currentMonsterIndex >= monsters.Length )
             {
                 //...go to the restart menu
                 currentScene = 2;
