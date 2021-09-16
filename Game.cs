@@ -115,7 +115,6 @@ namespace FightSim
             {
                 Update();
             }
-
             End();
         }
 
